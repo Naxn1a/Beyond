@@ -1,0 +1,34 @@
+services:
+  redis:
+    container_name: beyond-redis
+    image: "redis:alpine"
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - cache:/data
+    networks:
+      - server
+
+  postgres:
+    container_name: beyond-postgres
+    image: "postgres:alpine"
+    restart: always
+    ports:
+      - ${DB_PORT}:5432
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+    volumes:
+      - pgdb:/var/lib/postgresql/data
+    networks:
+      - server
+
+volumes:
+  cache:
+  pgdb:
+
+networks:
+  server:
+    driver: bridge
