@@ -3,24 +3,24 @@
   "module": "app.ts",
   "type": "module",
   "scripts": {
-    "dev": "bun --watch app.ts",
-    "build": "bun build app.ts",
-    "start": "NODE_ENV=production bun app.ts",
+    "dev": "bun --watch src/app.ts",
+    "build": "bun build src/app.ts",
+    "start": "NODE_ENV=production bun src/app.ts",
     "test": "bun test"
   },
   "devDependencies": {
-    "@types/bun": "latest",
+    "@types/bun": "^1.1.6",
     "@types/pg": "^8.11.6",
     "@types/redis": "^4.0.11",
-    "drizzle-kit": "^0.23.0"
+    "drizzle-kit": "^0.24.0"
   },
   "peerDependencies": {
-    "typescript": "^5.5.3"
+    "typescript": "^5.5.4"
   },
   "dependencies": {
-    "drizzle-orm": "^0.32.1",
-    "elysia": "^1.1.4",
+    "drizzle-orm": "^0.33.0",
+    "elysia": "^1.1.5",
     "pg": "^8.12.0",
-    "redis": "^4.6.15"
+    "redis": "^4.7.0"
   }
 }
