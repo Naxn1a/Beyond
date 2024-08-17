@@ -1,0 +1,16 @@
+[
+  {
+    "x": 200,
+    "y": 200,
+    "src": "https://cdn.pixabay.com/photo/2024/05/26/10/15/bird-8788491_1280.jpg",
+    "alt": "Image 1",
+    "route": "https://example.com"
+  },
+  {
+    "x": -200,
+    "y": -200,
+    "src": "https://cdn.pixabay.com/photo/2024/05/26/10/15/bird-8788491_1280.jpg",
+    "alt": "Image 1",
+    "route": "https://example.com"
+  }
+]
