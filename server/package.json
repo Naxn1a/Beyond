@@ -6,7 +6,9 @@
     "dev": "bun --watch src/app.ts",
     "build": "bun build src/app.ts",
     "start": "NODE_ENV=production bun src/app.ts",
-    "test": "bun test"
+    "test": "bun test",
+    "db:push": "drizzle-kit push --config=drizzle.config.ts",
+    "db:studio": "drizzle-kit studio --config=drizzle.config.ts"
   },
   "devDependencies": {
     "@types/bun": "^1.1.6",
@@ -18,8 +20,11 @@
     "typescript": "^5.5.4"
   },
   "dependencies": {
+    "@elysiajs/cors": "^1.1.0",
+    "@elysiajs/jwt": "^1.1.0",
+    "@elysiajs/swagger": "^1.1.1",
     "drizzle-orm": "^0.33.0",
-    "elysia": "^1.1.5",
+    "elysia": "^1.1.6",
     "pg": "^8.12.0",
     "redis": "^4.7.0"
   }
