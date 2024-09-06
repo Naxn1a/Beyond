@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
-import router from 'next/router';
+import { useRouter } from 'next/navigation'
 
 export default function Popup({ x, y, isHovered, setIsHovered, image, alt, path }: any) {
+  const router = useRouter();
   const handleImageClick = (route: string) => {
     if (route.startsWith('http')) {
       window.open(route, '_blank');
@@ -21,7 +22,7 @@ export default function Popup({ x, y, isHovered, setIsHovered, image, alt, path 
         x: isHovered ? x : 0,
         y: isHovered ? y : 0,
       }}
-      transition={{ duration: 0.1, delay: 0.1 }}
+      transition={{ duration: 0.4, delay: 0.1 }}
       onClick={() => handleImageClick(path)}
       style={{
         position: 'absolute',
