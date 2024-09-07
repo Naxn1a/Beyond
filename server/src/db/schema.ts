@@ -6,6 +6,7 @@ import {
   timestamp,
   uuid,
   unique,
+  serial,
 } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
@@ -13,9 +14,9 @@ export const users = pgTable("users", {
   username: text("username").unique().notNull(),
   email: text("email").notNull(),
   password: text("password").notNull(),
-  role_id: uuid("role_id").references(() => roles.id),
+  role_id: serial("role_id").references(() => roles.id),
   status: text("status").notNull().default("active"),
-  last_login: timestamp("created_at").notNull().defaultNow(),
+  last_login: timestamp("last_login"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
 });
@@ -34,7 +35,7 @@ export const usersRelations = relations(users, ({ one, many }) => ({
 }));
 
 export const roles = pgTable("roles", {
-  id: uuid("id").primaryKey().defaultRandom(),
+  id: serial("id").primaryKey(),
   name: text("name").unique(),
 });
 
