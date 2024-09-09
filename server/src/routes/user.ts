@@ -1,4 +1,5 @@
 import { Elysia, t } from "elysia";
+import { jwt } from "@elysiajs/jwt";
 import db from "@/db";
 import { users, roles } from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -9,6 +10,13 @@ export default new Elysia({
     httpOnly: true,
   },
 })
+  .use(
+    jwt({
+      name: "jwt",
+      secret: process.env.JWT_SECRETS!,
+      exp: "1d",
+    })
+  )
   .get("users", async () => {
     const users = await db.query.users.findMany();
     return users;
@@ -108,7 +116,7 @@ export default new Elysia({
   )
   .post(
     "signin",
-    async ({ body, error }) => {
+    async ({ body, jwt, cookie: { auth }, error }) => {
       const user = await db.query.users.findFirst({
         where: eq(users.username, body.username),
       });
@@ -123,7 +131,14 @@ export default new Elysia({
         throw error(400, { msg: "Username or Password does not match" });
       }
 
-      return { user };
+      auth.set({
+        value: await jwt.sign({ id: user.id, role_id: user.role_id }),
+        httpOnly: true,
+        maxAge: 86400,
+        secure: true,
+      });
+
+      return "Sign in success!";
     },
     {
       body: t.Object({
@@ -132,4 +147,13 @@ export default new Elysia({
       }),
     }
   )
-  .post("verify", async ({ body, error }) => {});
+  .post("verify", async ({ jwt, set, cookie: { auth } }) => {
+    const user = await jwt.verify(auth.value);
+
+    if (!user) {
+      set.status = 401;
+      return "Unauthorized";
+    }
+
+    return "Verified!";
+  });
