@@ -7,3 +7,24 @@
   margin: 0;
   box-sizing: border-box;
 }
+
+h1 {
+  font-family: sofia-pro, sans-serif;
+  font-size: 2rem;
+  margin-top: 14rem;
+  margin-left: 40px;
+}
+
+h2 {
+  font-family: sofia-pro, sans-serif;
+  font-size: 1.5rem;
+  margin-top: 2rem;
+  margin-left: 40px;
+}
+
+h3 {
+  font-family: sofia-pro, sans-serif;
+  font-size: 1.25rem;
+  margin-top: 2rem;
+  margin-left: 40px;
+}

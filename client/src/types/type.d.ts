@@ -5,3 +5,8 @@ interface PopupData {
   alt: string;
   route: string;
 }
+
+interface NavData {
+  link: any;
+  path: any;
+}

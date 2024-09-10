@@ -1,0 +1,10 @@
+[
+  {
+    "link": "/",
+    "path": "start"
+  },
+  {
+    "link": "/forum",
+    "path": "FORUM"
+  }
+]
