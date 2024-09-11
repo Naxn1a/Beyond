@@ -95,7 +95,7 @@ export default new Elysia({
       });
 
       const role_id = await db.query.roles.findFirst({
-        where: eq(roles.name, "user"),
+        where: eq(roles.name, "member"),
       });
 
       const newUser = await db.insert(users).values({

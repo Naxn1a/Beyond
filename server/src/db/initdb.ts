@@ -1,45 +1,63 @@
-import { roles, users } from "@/db/schema";
-import db from "@/db";
+import { roles, threads, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import type { NodePgDatabase } from "drizzle-orm/node-postgres";
+import type * as schema from "./schema";
 
-export default async () => {
-  await roleInit();
-  await userInit();
-};
+const init_roles = [
+  {
+    name: "admin",
+  },
+  {
+    name: "god",
+  },
+  {
+    name: "mvp",
+  },
+  {
+    name: "vip",
+  },
+  {
+    name: "member",
+  },
+];
 
-const userInit = async () => {
-  const userExists = await db.query.users.findFirst({
-    where: eq(users.username, process.env.ADMIN_USERNAME || "root"),
+const init_threads = [
+  {
+    title: "diary",
+  },
+];
+
+export default async (db: NodePgDatabase<typeof schema>) => {
+  await db.transaction(async (tx) => {
+    const roleExists = await tx.query.roles.findMany();
+    if (roleExists.length === 0) {
+      await tx.insert(roles).values(init_roles);
+    }
+
+    const userExists = await tx.query.users.findFirst({
+      where: eq(users.username, process.env.ADMIN_USERNAME!),
+    });
+    if (userExists) {
+      const hash = await Bun.password.hash(process.env.ADMIN_PASSWORD!, {
+        algorithm: "bcrypt",
+        cost: 11,
+      });
+
+      const role = await tx.query.roles.findFirst({
+        where: eq(roles.name, "admin"),
+      });
+
+      await tx.insert(users).values({
+        username: process.env.ADMIN_USERNAME!,
+        email: process.env.ADMIN_EMAIL!,
+        password: hash,
+        role_id: role?.id,
+      });
+    }
+
+    const threadsExists = await tx.query.threads.findMany();
+    if (threadsExists.length === 0) {
+      await tx.insert(threads).values(init_threads);
+    }
   });
-  if (!userExists) {
-    const hash = await Bun.password.hash(process.env.ADMIN_PASSWORD || "toor", {
-      algorithm: "bcrypt",
-      cost: 11,
-    });
-
-    const role_id = await db.query.roles.findFirst({
-      where: eq(roles.name, "admin"),
-    });
-
-    await db.insert(users).values({
-      username: process.env.ADMIN_USERNAME || "root",
-      email: process.env.ADMIN_EMAIL || "root@beyond.com",
-      password: hash,
-      role_id: role_id?.id,
-    });
-  }
-};
-
-const roleInit = async () => {
-  const roleExists = await db.query.roles.findMany();
-  if (roleExists.length === 0) {
-    await db.insert(roles).values([
-      {
-        name: "admin",
-      },
-      {
-        name: "user",
-      },
-    ]);
-  }
 };

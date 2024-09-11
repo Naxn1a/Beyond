@@ -2,13 +2,9 @@ import { Elysia } from "elysia";
 import { swagger } from "@elysiajs/swagger";
 import { cors } from "@elysiajs/cors";
 
-// init database
-import initdb from "./db/initdb";
-
 // routes
 import users from "./routes/user";
-
-initdb();
+import posts from "./routes/posts";
 
 export const app = new Elysia()
   .use(swagger())
@@ -19,7 +15,7 @@ export const app = new Elysia()
     }
   })
   .group("/api/v1", (api) => {
-    return api.use(users);
+    return api.use(users).use(posts);
   })
   .get("/", ({ redirect }) => redirect("/swagger"))
   .get("/helloworld", () => "Hello, World!")
