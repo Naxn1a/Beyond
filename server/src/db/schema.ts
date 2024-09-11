@@ -14,7 +14,7 @@ export const users = pgTable("users", {
   username: text("username").unique().notNull(),
   email: text("email").notNull(),
   password: text("password").notNull(),
-  role_id: serial("role_id").references(() => roles.id),
+  role_id: uuid("role_id").references(() => roles.id),
   status: text("status").notNull().default("active"),
   last_login: timestamp("last_login"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -35,7 +35,7 @@ export const usersRelations = relations(users, ({ one, many }) => ({
 }));
 
 export const roles = pgTable("roles", {
-  id: serial("id").primaryKey(),
+  id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").unique(),
 });
 

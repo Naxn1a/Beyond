@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { posts } from "@/db/schema";
 
 export default new Elysia({
-  tags: ["users"],
+  tags: ["posts"],
   cookie: {
     httpOnly: true,
   },
