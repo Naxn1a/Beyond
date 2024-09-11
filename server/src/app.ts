@@ -10,7 +10,7 @@ import users from "./routes/user";
 
 initdb();
 
-const app = new Elysia()
+export const app = new Elysia()
   .use(swagger())
   .use(cors())
   .onParse(({ request, contentType }) => {
