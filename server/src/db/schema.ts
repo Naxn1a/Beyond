@@ -31,12 +31,31 @@ export const usersRelations = relations(users, ({ one, many }) => ({
     fields: [users.role_id],
     references: [roles.id],
   }),
-  reputations: many(reputations),
+  reputationsReceived: many(reputations, {
+    relationName: "reputation_profile",
+  }),
+  reputationsGiven: many(reputations, {
+    relationName: "reputation_user",
+  }),
   subscription: one(subscriptions),
   posts: many(posts),
   threads: many(threads),
   replies: many(replies),
   logs: many(logs),
+  messagesSent: many(messages, {
+    relationName: "messages_sender",
+  }),
+  messagesReceived: many(messages, {
+    relationName: "messages_receiver",
+  }),
+  reportByUser: many(reportUser, {
+    relationName: "report_by_user",
+  }),
+  reportedUser: many(reportUser, {
+    relationName: "reported_user",
+  }),
+  reportPost: many(reportPost),
+  transactions: many(transactions),
 }));
 
 export const reputations = pgTable(
@@ -56,10 +75,12 @@ export const reputationsRelations = relations(reputations, ({ one }) => ({
   profile: one(users, {
     fields: [reputations.profile_id],
     references: [users.id],
+    relationName: "reputation_profile",
   }),
   user: one(users, {
     fields: [reputations.user_id],
     references: [users.id],
+    relationName: "reputation_user",
   }),
 }));
 
@@ -201,10 +222,12 @@ export const messagesRelations = relations(messages, ({ one }) => ({
   sender: one(users, {
     fields: [messages.sender_id],
     references: [users.id],
+    relationName: "messages_sender",
   }),
   receiver: one(users, {
     fields: [messages.receiver_id],
     references: [users.id],
+    relationName: "messages_receiver",
   }),
 }));
 
@@ -225,10 +248,12 @@ export const reportUserRelations = relations(reportUser, ({ one }) => ({
   user: one(users, {
     fields: [reportUser.user_id],
     references: [users.id],
+    relationName: "report_by_user",
   }),
   reported_user: one(users, {
     fields: [reportUser.reported_user_id],
     references: [users.id],
+    relationName: "reported_user",
   }),
 }));
 
@@ -250,7 +275,7 @@ export const reportPostRelations = relations(reportPost, ({ one }) => ({
     fields: [reportPost.user_id],
     references: [users.id],
   }),
-  post: one(posts, {
+  reported_post: one(posts, {
     fields: [reportPost.post_id],
     references: [posts.id],
   }),
