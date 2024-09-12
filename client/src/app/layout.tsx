@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Itim } from "next/font/google";
 import "./globals.css";
+import Navbar from "@/components/navbar";
 
 const itim = Itim({ weight: ["400"], preload: false });
 
@@ -16,6 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <Navbar />
       <body className={itim.className}>{children}</body>
     </html>
   );

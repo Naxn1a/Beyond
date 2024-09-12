@@ -2,6 +2,8 @@ import React from 'react'
 
 export default function Forum() {
   return (
-    <div>page</div>
+    <div>
+      <p>Forum page</p>
+    </div>
   )
 }
