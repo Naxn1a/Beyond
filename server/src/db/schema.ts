@@ -6,7 +6,7 @@ import {
   timestamp,
   uuid,
   unique,
-  serial,
+  json,
 } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
@@ -14,11 +14,16 @@ export const users = pgTable("users", {
   username: text("username").unique().notNull(),
   email: text("email").notNull(),
   password: text("password").notNull(),
+  bio: text("bio"),
+  avatar: text("avatar"),
   role_id: uuid("role_id").references(() => roles.id),
   status: text("status").notNull().default("active"),
   last_login: timestamp("last_login"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .notNull()
+    .$onUpdate(() => new Date()),
 });
 
 export const usersRelations = relations(users, ({ one, many }) => ({
@@ -26,12 +31,36 @@ export const usersRelations = relations(users, ({ one, many }) => ({
     fields: [users.role_id],
     references: [roles.id],
   }),
-  profiles: one(profiles),
   reputations: many(reputations),
-  subscriptions: one(subscriptions),
+  subscription: one(subscriptions),
   posts: many(posts),
-  comments: many(comments),
+  threads: many(threads),
+  replies: many(replies),
   logs: many(logs),
+}));
+
+export const reputations = pgTable(
+  "reputations",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    profile_id: uuid("profile_id").references(() => users.id),
+    user_id: uuid("user_id").references(() => users.id),
+    create_at: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    unqiue: unique().on(table.profile_id, table.user_id),
+  })
+);
+
+export const reputationsRelations = relations(reputations, ({ one }) => ({
+  profile: one(users, {
+    fields: [reputations.profile_id],
+    references: [users.id],
+  }),
+  user: one(users, {
+    fields: [reputations.user_id],
+    references: [users.id],
+  }),
 }));
 
 export const roles = pgTable("roles", {
@@ -41,50 +70,16 @@ export const roles = pgTable("roles", {
 
 export const rolesRelations = relations(roles, ({ many }) => ({
   users: many(users),
-}));
-
-export const profiles = pgTable("profiles", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  user_id: uuid("user_id").references(() => users.id),
-  bio: text("bio"),
-  avatar: text("avatar"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
-});
-
-export const profilesRelations = relations(profiles, ({ one, many }) => ({
-  user: one(users, {
-    fields: [profiles.user_id],
-    references: [users.id],
-  }),
-  reputations: many(reputations),
-}));
-
-export const reputations = pgTable("reputations", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  profile_id: uuid("profile_id").references(() => profiles.id),
-  user_id: uuid("user_id").references(() => users.id),
-  create_at: timestamp("created_at").defaultNow().notNull(),
-}, (table) => ({
-  unqiue: unique().on(table.profile_id, table.user_id)
-}));
-
-export const reputationsRelations = relations(reputations, ({ one }) => ({
-  profile: one(profiles, {
-    fields: [reputations.profile_id],
-    references: [profiles.id],
-  }),
-  user: one(users, {
-    fields: [reputations.user_id],
-    references: [users.id],
-  }),
+  subscriptions: many(subscriptions),
+  transactions: many(transactions),
 }));
 
 export const subscriptions = pgTable("subscriptions", {
   id: uuid("id").primaryKey().defaultRandom(),
   user_id: uuid("user_id").references(() => users.id),
-  type: text("type").notNull(),
+  role_id: uuid("role_id").references(() => roles.id),
   price: integer("price").notNull(),
+  transactions_id: uuid("transactions_id").references(() => transactions.id),
   start_date: timestamp("start_date").defaultNow().notNull(),
   end_date: timestamp("end_date").notNull(),
 });
@@ -94,15 +89,54 @@ export const subscriptionsRelations = relations(subscriptions, ({ one }) => ({
     fields: [subscriptions.user_id],
     references: [users.id],
   }),
+  role: one(roles, {
+    fields: [subscriptions.role_id],
+    references: [roles.id],
+  }),
+  transaction: one(transactions, {
+    fields: [subscriptions.transactions_id],
+    references: [transactions.id],
+  }),
+}));
+
+export const transactions = pgTable("transactions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  user_id: uuid("user_id").references(() => users.id),
+  role_id: uuid("role_id").references(() => roles.id),
+  price: integer("price").notNull(),
+  status: text("status").notNull().default("pending"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .notNull()
+    .$onUpdate(() => new Date()),
+});
+
+export const transactionsRelations = relations(transactions, ({ one }) => ({
+  user: one(users, {
+    fields: [transactions.user_id],
+    references: [users.id],
+  }),
+  role: one(roles, {
+    fields: [transactions.role_id],
+    references: [roles.id],
+  }),
+  subscription: one(subscriptions),
 }));
 
 export const threads = pgTable("threads", {
   id: uuid("id").primaryKey().defaultRandom(),
   title: text("title").notNull(),
+  createBy: uuid("create_by").references(() => users.id),
+  createAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-export const threadsRelations = relations(threads, ({ many }) => ({
+export const threadsRelations = relations(threads, ({ many, one }) => ({
   posts: many(posts),
+  user: one(users, {
+    fields: [threads.createBy],
+    references: [users.id],
+  }),
 }));
 
 export const posts = pgTable("posts", {
@@ -110,9 +144,13 @@ export const posts = pgTable("posts", {
   thread_id: uuid("thread_id").references(() => threads.id),
   user_id: uuid("user_id").references(() => users.id),
   title: text("title").notNull(),
-  content: text("content").notNull(),
+  description: text("description").notNull(),
+  detail: json("detail"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .notNull()
+    .$onUpdate(() => new Date()),
 });
 
 export const postsRelations = relations(posts, ({ one, many }) => ({
@@ -124,26 +162,29 @@ export const postsRelations = relations(posts, ({ one, many }) => ({
     fields: [posts.user_id],
     references: [users.id],
   }),
-  comments: many(comments),
+  replies: many(replies),
   reports: many(reportPost),
 }));
 
-export const comments = pgTable("comments", {
+export const replies = pgTable("replies", {
   id: uuid("id").primaryKey().defaultRandom(),
   post_id: uuid("post_id").references(() => posts.id),
   user_id: uuid("user_id").references(() => users.id),
   content: text("content").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .notNull()
+    .$onUpdate(() => new Date()),
 });
 
-export const commentsRelations = relations(comments, ({ one }) => ({
-  posts: one(posts, {
-    fields: [comments.post_id],
+export const repliesRelations = relations(replies, ({ one }) => ({
+  post: one(posts, {
+    fields: [replies.post_id],
     references: [posts.id],
   }),
-  users: one(users, {
-    fields: [comments.user_id],
+  user: one(users, {
+    fields: [replies.user_id],
     references: [users.id],
   }),
 }));
@@ -172,7 +213,12 @@ export const reportUser = pgTable("reports", {
   user_id: uuid("user_id").references(() => users.id),
   reported_user_id: uuid("reported_user_id").references(() => users.id),
   reason: text("reason").notNull(),
+  status: text("status").notNull().default("pending"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .notNull()
+    .$onUpdate(() => new Date()),
 });
 
 export const reportUserRelations = relations(reportUser, ({ one }) => ({
@@ -191,7 +237,12 @@ export const reportPost = pgTable("report_posts", {
   user_id: uuid("user_id").references(() => users.id),
   post_id: uuid("post_id").references(() => posts.id),
   reason: text("reason").notNull(),
+  status: text("status").notNull().default("pending"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .notNull()
+    .$onUpdate(() => new Date()),
 });
 
 export const reportPostRelations = relations(reportPost, ({ one }) => ({

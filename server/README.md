@@ -1,1 +1,10 @@
 # Beyond - Server
+
+# dotenv
+```
+DATABASE_URL=
+ADMIN_USERNAME=
+ADMIN_EMAIL=
+ADMIN_PASSWORD=
+JWT_SECRETS=
+```

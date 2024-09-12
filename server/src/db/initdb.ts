@@ -8,6 +8,9 @@ const init_roles = [
     name: "admin",
   },
   {
+    name: "mod",
+  },
+  {
     name: "god",
   },
   {
@@ -37,7 +40,7 @@ export default async (db: NodePgDatabase<typeof schema>) => {
     const userExists = await tx.query.users.findFirst({
       where: eq(users.username, process.env.ADMIN_USERNAME!),
     });
-    
+
     if (!userExists) {
       const hash = await Bun.password.hash(process.env.ADMIN_PASSWORD!, {
         algorithm: "bcrypt",
