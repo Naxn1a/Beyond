@@ -14,6 +14,7 @@ export const users = pgTable("users", {
   username: text("username").unique().notNull(),
   email: text("email").notNull(),
   password: text("password").notNull(),
+  salt: text("salt").notNull(),
   bio: text("bio"),
   avatar: text("avatar"),
   role_id: uuid("role_id").references(() => roles.id),

@@ -5,28 +5,38 @@ import { posts } from "@/db/schema";
 
 export default new Elysia({
   tags: ["posts"],
+  prefix: "/posts",
   cookie: {
     httpOnly: true,
   },
 })
-  .get("posts", async ({ query }) => {
-    const { limit, offset } = query;
-    const post = await db
-      .select()
-      .from(posts)
-      .orderBy(desc(posts.createdAt))
-      .limit(parseInt(limit!))
-      .offset(parseInt(offset!));
-    return post;
-  })
-  .get("posts/:id", async ({ params }) => {
+  .get(
+    "/",
+    async ({ query }) => {
+      const { limit, offset } = query;
+      const post = await db
+        .select()
+        .from(posts)
+        .orderBy(desc(posts.createdAt))
+        .limit(parseInt(limit!))
+        .offset(parseInt(offset!));
+      return post;
+    },
+    {
+      query: t.Object({
+        limit: t.String(),
+        offset: t.String(),
+      }),
+    }
+  )
+  .get("/:id", async ({ params }) => {
     const post = await db.query.posts.findFirst({
       where: eq(posts.id, params.id),
     });
     return post;
   })
   .post(
-    "posts",
+    "/",
     async ({ body }) => {
       const post = await db.transaction(async (tx) => {
         const [post] = await tx.insert(posts).values(body).returning();
@@ -49,7 +59,7 @@ export default new Elysia({
     }
   )
   .put(
-    "posts/:id",
+    "/:id",
     async ({ params, body }) => {
       const post = await db.transaction(async (tx) => {
         const [post] = await tx
@@ -75,7 +85,7 @@ export default new Elysia({
       }),
     }
   )
-  .delete("posts/:id", async ({ params }) => {
+  .delete("/:id", async ({ params }) => {
     const post = await db.transaction(async (tx) => {
       const [post] = await tx
         .delete(posts)

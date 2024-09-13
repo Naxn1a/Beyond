@@ -2,6 +2,7 @@ import { roles, threads, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 import type * as schema from "./schema";
+import { randomBytes } from "crypto";
 
 const init_roles = [
   {
@@ -42,9 +43,12 @@ export default async (db: NodePgDatabase<typeof schema>) => {
     });
 
     if (!userExists) {
-      const hash = await Bun.password.hash(process.env.ADMIN_PASSWORD!, {
-        algorithm: "bcrypt",
-        cost: 11,
+      const salt = randomBytes(32).toString("hex");
+
+      const hash = await Bun.password.hash(process.env.ADMIN_PASSWORD + salt, {
+        algorithm: "argon2id",
+        memoryCost: 4,
+        timeCost: 3,
       });
 
       const role = await tx.query.roles.findFirst({
@@ -55,6 +59,7 @@ export default async (db: NodePgDatabase<typeof schema>) => {
         username: process.env.ADMIN_USERNAME!,
         email: process.env.ADMIN_EMAIL!,
         password: hash,
+        salt,
         role_id: role?.id,
       });
     }

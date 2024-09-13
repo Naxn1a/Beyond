@@ -5,22 +5,23 @@ import { subscriptions } from "@/db/schema";
 
 export default new Elysia({
   tags: ["subscriptions"],
+  prefix: "/subscriptions",
   cookie: {
     httpOnly: true,
   },
 })
-  .get("subscriptions", async () => {
+  .get("/", async () => {
     const subscriptions = await db.query.subscriptions.findMany();
     return subscriptions;
   })
-  .get("subscriptions/:id", async ({ params }) => {
+  .get("/:id", async ({ params }) => {
     const subscription = await db.query.subscriptions.findFirst({
       where: eq(subscriptions.id, params.id),
     });
     return subscription;
   })
   .post(
-    "subscriptions",
+    "/",
     async ({ body }) => {
       const subscription = await db.transaction(async (tx) => {
         const [subscription] = await tx
@@ -51,7 +52,7 @@ export default new Elysia({
     }
   )
   .put(
-    "subscriptions/:id",
+    "/:id",
     async ({ params, body }) => {
       const subscription = await db.transaction(async (tx) => {
         const [subscription] = await tx
