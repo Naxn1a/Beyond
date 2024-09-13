@@ -45,10 +45,10 @@ export default function Card() {
             Hey, I'm <span style={{ backgroundColor: '#8A2BE2', padding: '2px 8px', borderRadius: '5px' }}>Name 👨‍💼</span>
           </p>
           <p style={{ fontSize: '28px', margin: '15px 0' }}>
-            I'm a <span style={{ backgroundColor: '#FFA500', padding: '2px 8px', borderRadius: '5px' }}>product designer,</span>
+            I'm a <span style={{ backgroundColor: '#FFA500', padding: '2px 8px', borderRadius: '5px' }}>project designer,</span>
           </p>
           <p style={{ fontSize: '24px', margin: '15px 0' }}>
-            currently at <span style={{ backgroundColor: '#32CD32', padding: '2px 8px', borderRadius: '5px' }}>Prisma ↗</span>
+            currently at <span style={{ backgroundColor: '#32CD32', padding: '2px 8px', borderRadius: '5px' }}>beyond ↗</span>
           </p>
         </motion.div>
       </motion.div>

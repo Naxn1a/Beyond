@@ -10,3 +10,10 @@ interface NavData {
   link: any;
   path: any;
 }
+
+interface Thread {
+  id: string;
+  title: string;
+  createBy: string | null;
+  createAt: string;
+}

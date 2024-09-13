@@ -28,3 +28,23 @@ h3 {
   margin-top: 2rem;
   margin-left: 40px;
 }
+
+.bg-main {
+  /* display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden; */
+  background-color: #121212;
+  color: #fff;
+}
+
+.main-text{
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
