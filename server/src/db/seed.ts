@@ -5,31 +5,15 @@ import type * as schema from "./schema";
 import { randomBytes } from "crypto";
 
 const init_roles = [
-  {
-    name: "admin",
-  },
-  {
-    name: "mod",
-  },
-  {
-    name: "god",
-  },
-  {
-    name: "mvp",
-  },
-  {
-    name: "vip",
-  },
-  {
-    name: "member",
-  },
+  { name: "admin" },
+  { name: "mod" },
+  { name: "god" },
+  { name: "mvp" },
+  { name: "vip" },
+  { name: "member" },
 ];
 
-const init_threads = [
-  {
-    title: "diary",
-  },
-];
+const init_threads = [{ title: "diary" }];
 
 export default async (db: NodePgDatabase<typeof schema>) => {
   await db.transaction(async (tx) => {
