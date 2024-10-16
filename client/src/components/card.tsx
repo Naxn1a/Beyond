@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Popup from './popup';
 import popupData from '@/data/popup.json';
+import { PopupData } from '@/types/type';
 
 export default function Card() {
   const [isHovered, setIsHovered] = useState(false);

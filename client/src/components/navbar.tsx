@@ -22,7 +22,7 @@ export default function Navbar() {
     { icon: <FaHome />, link: '/', name: 'Start' },
     { icon: <HiChatAlt />, link: '/chat', name: 'Chat' },
     { icon: <FaClipboardList />, link: '/forum', name: 'Forum' },
-    { icon: <FaUser />, link: '#', name: '#' },
+    { icon: <FaUser />, link: '/into', name: 'Into' },
     { icon: <FaTwitter />, link: '#', name: '#', external: true },
     { icon: <FaShoppingCart />, link: '#', name: '#' }
   ];

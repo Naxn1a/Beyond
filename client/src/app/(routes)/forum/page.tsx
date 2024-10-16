@@ -7,17 +7,18 @@ import { usePathname } from 'next/navigation';
 import { GoPaste } from "react-icons/go";
 import { motion, useMotionValue } from 'framer-motion';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { Thread } from '@/types/type';
 
 const MotionA = dynamic(() => import('framer-motion').then(mod => mod.motion.a), { ssr: false });
 
 export default function Forum() {
   const [threads, setThreads] = useState<Thread[]>([]);
-  const [index, setIndex] = useState(2);
+  const [index, setIndex] = useState(0);
   const overflow = useMotionValue('scroll');
 
   useEffect(() => {
     axios
-      .get('https://api.escuelajs.co/api/v1/products')
+      .get(`https://api.escuelajs.co/api/v1/products?offset=${index}0&limit=12`)
       .then((res) => setThreads(res.data))
       .catch((err) => console.log(err));
   }, []);
@@ -76,7 +77,7 @@ export default function Forum() {
                 transition={{ type: 'spring', stiffness: 300 }}
               >
                 <Link href={`/forum/${thread.title}`} passHref>
-                  View Thread
+                  View Post
                 </Link>
               </MotionA>
             </motion.div>
