@@ -3,7 +3,7 @@ import { motion, useDeprecatedInvertedScale } from "framer-motion";
 import { closeSpring, openSpring } from "./animation";
 import { TitleProps, ScaleTranslateData } from "@/types/type";
 
-export const Title = ({ title, category, isSelected }: TitleProps) => {
+export default function Title({ title, category, isSelected }: TitleProps) {
   const inverted = useDeprecatedInvertedScale();
   const x = isSelected ? 30 : 15;
   const y = x;

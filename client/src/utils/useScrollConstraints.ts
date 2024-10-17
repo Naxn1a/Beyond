@@ -5,9 +5,6 @@ interface Constraints {
   bottom: number;
 }
 
-/**
- * Calculate the top/bottom scroll constraints of a full-screen element vs the viewport
- */
 export function useScrollConstraints(ref: { current: any; }, measureConstraints: boolean) {
   const [constraints, setConstraints] = useState<Constraints>({
     top: 0,

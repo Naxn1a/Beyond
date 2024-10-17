@@ -1,20 +1,19 @@
 import * as React from "react";
 import { Card } from "@/components/palette/index";
 import { CardData } from "@/types/type";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
-const List = () => {
+const List = ({ selectedId }: { selectedId: string | undefined }) => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const id = searchParams.get('id');
 
   return (
     <ul className="card-list">
       {cardData.map((card) => (
         <Card
+          history={{ push: (route: string) => router.push(route) }}
           key={card.id}
-          isSelected={id === card.id}
-          onClick={() => router.push(`/${card.id}`)}
+          isSelected={selectedId === card.id}
+          onClick={() => router.push(`/into/${card.id}`)}
           {...card}
         />
       ))}
@@ -22,62 +21,64 @@ const List = () => {
   );
 };
 
-export const CardList = () => <List />;
+export const CardList = ({ selectedId }: { selectedId: string | undefined }) => {
+  return <List selectedId={selectedId} />;
+};
 
 const cardData: CardData[] = [
   {
     id: "a",
     category: "Technologies",
-    title: "5 Food Apps Delivering the Best of Your City",
+    title: "into the Future",
     pointOfInterest: 80,
     backgroundColor: "#814A0E",
   },
   {
     id: "b",
-    category: "How to",
-    title: "Arrange Your Apple Devices for the Gram",
+    category: "Food",
+    title: "into the Kitchen",
     pointOfInterest: 120,
     backgroundColor: "#959684",
   },
   {
     id: "c",
-    category: "Pedal Power",
-    title: "Map Apps for the Superior Mode of Transport",
+    category: "TV & Movies",
+    title: "into the Screen",
     pointOfInterest: 260,
     backgroundColor: "#5DBCD2",
   },
   {
     id: "d",
-    category: "Holidays",
-    title: "Our Pick of Apps to Help You Escape From Apps",
+    category: "Anime",
+    title: "into the Isekai",
     pointOfInterest: 200,
     backgroundColor: "#8F986D",
   },
   {
     id: "e",
     category: "Photography",
-    title: "The Latest Ultra-Specific Photography Editing Apps",
+    title: "into the Lens",
     pointOfInterest: 150,
     backgroundColor: "#FA6779",
   },
   {
     id: "f",
-    category: "They're all the same",
-    title: "100 Cupcake Apps for the Cupcake Connoisseur",
+    category: "Music & Instruments",
+    title: "into the Beat",
     pointOfInterest: 60,
     backgroundColor: "#282F49",
   },
   {
     id: "g",
-    category: "Cats",
-    title: "Yes, They Are Sociopaths",
+    category: "Animals",
+    title: "into the Wild",
     pointOfInterest: 200,
     backgroundColor: "#AC7441",
   },
   {
     id: "h",
-    category: "Holidays",
-    title: "Seriously the Only Escape is the Stratosphere",
+    category: "Sports",
+    title: "into the Field",
     pointOfInterest: 260,
     backgroundColor: "#CC555B",
   },

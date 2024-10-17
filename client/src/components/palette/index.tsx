@@ -2,14 +2,14 @@ import * as React from "react";
 import { memo, useRef } from "react";
 import { motion, useMotionValue } from "framer-motion";
 import Link from 'next/link';
-import { useInvertedBorderRadius } from "../../utils/useInvertedBorderRadius";
-import { CardData } from "@/types/type";
-import { ContentPlaceholder } from "./contentPlaceholder";
-import { Title } from "./title";
-import { Image } from "./image";
+import ContentPlaceholder from "./contentPlaceholder";
+import Title from "./title";
+import Image from "./image";
 import { openSpring, closeSpring } from "./animation";
+import { useInvertedBorderRadius } from "../../utils/useInvertedBorderRadius";
 import { useScrollConstraints } from "../../utils/useScrollConstraints";
 import { useWheelScroll } from "../../utils/useWheelScroll";
+import { CardData } from "@/types/type";
 
 interface Props extends CardData {
   isSelected: boolean;

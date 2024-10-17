@@ -1,32 +1,36 @@
 import * as React from "react";
-import { motion, useDeprecatedInvertedScale } from "framer-motion";
+import { motion } from "framer-motion";
 import { closeSpring } from "./animation";
 import { ImageProps } from "@/types/type";
-import { imagelist } from "@/data/imagelist.json";
 
-export const Image = ({
+export default function Image({
   id,
   isSelected,
   pointOfInterest = 0,
-  backgroundColor
-}: ImageProps) => {
-  const inverted = useDeprecatedInvertedScale();
-
+  backgroundColor,
+}: ImageProps) {
   return (
     <motion.div
       className="card-image-container"
-      style={{ ...inverted, backgroundColor, originX: 0, originY: 0 }}
+      style={{ backgroundColor, originX: 0, originY: 0 }}
     >
-      <motion.img
-        className="card-image"
-        src={`images/${id}.jpg`} //if it exists in local images folder
-        alt=""
+      <motion.div
+        className="image-wrapper"
         initial={false}
-        animate={
-          isSelected ? { x: -20, y: -20 } : { x: -pointOfInterest, y: 0 }
-        }
+        animate={isSelected ? { scale: 1.1 } : { scale: 1 }}
         transition={closeSpring}
-      />
+      >
+        <motion.img
+          className="card-image"
+          src={`/images/${id}.jpg`} // Adjust path if images are in public folder
+          alt=""
+          initial={false}
+          animate={
+            isSelected ? { x: -20, y: -20 } : { x: -pointOfInterest, y: 0 }
+          }
+          transition={closeSpring}
+        />
+      </motion.div>
     </motion.div>
   );
 };

@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import { Header } from "@/components/header";
+import Header from "@/components/header";
 import { CardList } from "@/components/cardlist";
 
 export default function Into() {
@@ -8,7 +8,7 @@ export default function Into() {
   return (
     <div className="container">
       <Header />
-      <CardList />
+      <CardList selectedId={undefined} />
     </div>
   )
 }

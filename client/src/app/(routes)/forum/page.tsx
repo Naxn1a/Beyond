@@ -8,6 +8,7 @@ import { GoPaste } from "react-icons/go";
 import { motion, useMotionValue } from 'framer-motion';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Thread } from '@/types/type';
+import Header from '@/components/header';
 
 const MotionA = dynamic(() => import('framer-motion').then(mod => mod.motion.a), { ssr: false });
 
@@ -40,6 +41,7 @@ export default function Forum() {
   const pathname = usePathname();
   return (
     <div className="bg-main" style={{ overflow: 'hidden' }}>
+      <Header />
       <InfiniteScroll
         dataLength={threads.length}
         next={fetchTitle}

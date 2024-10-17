@@ -2,7 +2,7 @@ import * as React from "react";
 import { LoremIpsum } from "react-lorem-ipsum";
 import { motion, useDeprecatedInvertedScale } from "framer-motion";
 
-export const ContentPlaceholder = React.memo(() => {
+export default function ContentPlaceholder() {
   const inverted = useDeprecatedInvertedScale();
   return (
     <motion.div
@@ -12,4 +12,4 @@ export const ContentPlaceholder = React.memo(() => {
       <LoremIpsum p={6} avgWordsPerSentence={6} avgSentencesPerParagraph={4} />
     </motion.div>
   );
-});
+}

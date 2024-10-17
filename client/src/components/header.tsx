@@ -1,12 +1,21 @@
 import * as React from "react";
 import { Avatar } from "react-lorem-ipsum";
 
-export const Header = () => (
-  <header>
-    <span className="date">Tuesday, August 13th</span>
-    <h1>Today</h1>
-    <div className="avatar">
-      <Avatar />
-    </div>
-  </header>
-);
+export default function Header() {
+  const today = new Date();
+  const formattedDate = today.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  return (
+    <header>
+      <span className="date">{formattedDate}</span>
+      <h1>Trends ↗</h1>
+      <div className="avatar">
+        <Avatar />
+      </div>
+    </header>
+  );
+};
