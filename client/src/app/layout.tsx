@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Itim } from "next/font/google";
+import { Noto_Sans_Thai_Looped } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navbar";
 
-const itim = Itim({ weight: ["400"], preload: false });
+const Noto_Sans = Noto_Sans_Thai_Looped({ weight: ["400"], preload: false });
 
 export const metadata: Metadata = {
   title: "Beyond",
@@ -18,7 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <Navbar />
-      <body className={itim.className}>{children}</body>
+      <body className={Noto_Sans.className}>{children}</body>
     </html>
   );
 }
