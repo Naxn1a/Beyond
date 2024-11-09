@@ -1,31 +1,5 @@
-import * as React from "react";
-import { Card } from "@/components/palette/index";
-import { CardData } from "@/types/type";
-import { useRouter } from "next/navigation";
-
-const List = ({ selectedId }: { selectedId: string | undefined }) => {
-  const router = useRouter();
-
-  return (
-    <ul className="card-list">
-      {cardData.map((card) => (
-        <Card
-          history={{ push: (route: string) => router.push(route) }}
-          key={card.id}
-          isSelected={selectedId === card.id}
-          onClick={() => router.push(`/into/${card.id}`)}
-          {...card}
-        />
-      ))}
-    </ul>
-  );
-};
-
-export const CardList = ({ selectedId }: { selectedId: string | undefined }) => {
-  return <List selectedId={selectedId} />;
-};
-
-const cardData: CardData[] = [
+export const items = [
+  // Photo by ivan Torres on Unsplash
   {
     id: "a",
     category: "Technologies",
@@ -83,3 +57,5 @@ const cardData: CardData[] = [
     backgroundColor: "#CC555B",
   },
 ];
+
+export const openSpring = { type: "spring", stiffness: 200, damping: 30 };
