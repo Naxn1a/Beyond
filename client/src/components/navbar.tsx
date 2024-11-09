@@ -3,7 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { FaHome, FaPaintBrush, FaEnvelope, FaUser, FaTwitter, FaShoppingCart } from 'react-icons/fa';
+import { FaHome, FaClipboardList, FaUser, FaTwitter, FaShoppingCart } from 'react-icons/fa';
+import { HiChatAlt } from 'react-icons/hi';
 
 const MotionDiv = dynamic(() => import('framer-motion').then(mod => mod.motion.div), { ssr: false });
 const MotionNav = dynamic(() => import('framer-motion').then(mod => mod.motion.nav), { ssr: false });
@@ -19,9 +20,9 @@ export default function Navbar() {
 
   const navItems = [
     { icon: <FaHome />, link: '/', name: 'Start' },
-    { icon: <FaPaintBrush />, link: '/home', name: 'Home' },
-    { icon: <FaEnvelope />, link: '/forum', name: 'Forum' },
-    { icon: <FaUser />, link: '#', name: '#' },
+    { icon: <HiChatAlt />, link: '/chat', name: 'Chat' },
+    { icon: <FaClipboardList />, link: '/forum', name: 'Forum' },
+    { icon: <FaUser />, link: '/into', name: 'Into' },
     { icon: <FaTwitter />, link: '#', name: '#', external: true },
     { icon: <FaShoppingCart />, link: '#', name: '#' }
   ];
@@ -48,7 +49,6 @@ export default function Navbar() {
         }}
       >
         {navItems.map((item, index) => (
-
           item.external ? (
             <MotionA
               key={index}
@@ -63,7 +63,7 @@ export default function Navbar() {
             </MotionA>
           ) : (
             <MotionA
-              className={`text-white text-2xl p-2 rounded-full ${pathname === item.link ? 'text-neutral-600' : ''}`}
+              className={`text-white text-2xl p-2 rounded-full ${pathname === item.link ? 'text-slate-' : ''}`}
               whileHover={{ scale: 1.2, rotate: 10 }}
               transition={{ type: 'spring', stiffness: 300 }}
             >

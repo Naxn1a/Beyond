@@ -11,6 +11,7 @@ export const app = new Elysia()
       return request.json();
     }
   })
+
   .use(route)
   .get("/", ({ redirect }) => redirect("/swagger"))
   .get("/helloworld", () => "Hello, World!")
