@@ -14,16 +14,14 @@ export const users = pgTable("users", {
   username: text("username").unique().notNull(),
   email: text("email").notNull(),
   password: text("password").notNull(),
+  salt: text("salt").notNull(),
   bio: text("bio"),
   avatar: text("avatar"),
   role_id: uuid("role_id").references(() => roles.id),
   status: text("status").notNull().default("active"),
   last_login: timestamp("last_login"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
-    .defaultNow()
-    .notNull()
-    .$onUpdate(() => new Date()),
+  updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
 });
 
 export const usersRelations = relations(users, ({ one, many }) => ({
@@ -42,25 +40,15 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   threads: many(threads),
   replies: many(replies),
   logs: many(logs),
-  messagesSent: many(messages, {
-    relationName: "messages_sender",
-  }),
-  messagesReceived: many(messages, {
-    relationName: "messages_receiver",
-  }),
-  reportByUser: many(reportUser, {
-    relationName: "report_by_user",
-  }),
-  reportedUser: many(reportUser, {
-    relationName: "reported_user",
-  }),
+  messagesSent: many(messages, { relationName: "messages_sender" }),
+  messagesReceived: many(messages, { relationName: "messages_receiver" }),
+  reportByUser: many(reportUser, { relationName: "report_by_user" }),
+  reportedUser: many(reportUser, { relationName: "reported_user" }),
   reportPost: many(reportPost),
   transactions: many(transactions),
 }));
 
-export const reputations = pgTable(
-  "reputations",
-  {
+export const reputations = pgTable("reputations", {
     id: uuid("id").primaryKey().defaultRandom(),
     profile_id: uuid("profile_id").references(() => users.id),
     user_id: uuid("user_id").references(() => users.id),
@@ -127,10 +115,7 @@ export const transactions = pgTable("transactions", {
   price: integer("price").notNull(),
   status: text("status").notNull().default("pending"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
-    .defaultNow()
-    .notNull()
-    .$onUpdate(() => new Date()),
+  updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
 });
 
 export const transactionsRelations = relations(transactions, ({ one }) => ({
@@ -168,10 +153,7 @@ export const posts = pgTable("posts", {
   description: text("description").notNull(),
   detail: json("detail"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
-    .defaultNow()
-    .notNull()
-    .$onUpdate(() => new Date()),
+  updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
 });
 
 export const postsRelations = relations(posts, ({ one, many }) => ({
@@ -193,10 +175,7 @@ export const replies = pgTable("replies", {
   user_id: uuid("user_id").references(() => users.id),
   content: text("content").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
-    .defaultNow()
-    .notNull()
-    .$onUpdate(() => new Date()),
+  updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
 });
 
 export const repliesRelations = relations(replies, ({ one }) => ({
@@ -238,10 +217,7 @@ export const reportUser = pgTable("reports", {
   reason: text("reason").notNull(),
   status: text("status").notNull().default("pending"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
-    .defaultNow()
-    .notNull()
-    .$onUpdate(() => new Date()),
+  updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
 });
 
 export const reportUserRelations = relations(reportUser, ({ one }) => ({
@@ -264,10 +240,7 @@ export const reportPost = pgTable("report_posts", {
   reason: text("reason").notNull(),
   status: text("status").notNull().default("pending"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
-    .defaultNow()
-    .notNull()
-    .$onUpdate(() => new Date()),
+  updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
 });
 
 export const reportPostRelations = relations(reportPost, ({ one }) => ({

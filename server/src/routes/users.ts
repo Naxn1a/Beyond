@@ -1,11 +1,15 @@
 import { Elysia, t } from "elysia";
 import { jwt } from "@elysiajs/jwt";
+import { randomBytes } from "crypto";
 import db from "@/db";
-import { users, roles, reputations } from "@/db/schema";
+import { users, roles } from "@/db/schema";
 import { eq } from "drizzle-orm";
+
+export const validateSession = async (session: string) => {};
 
 export default new Elysia({
   tags: ["users"],
+  prefix: "/users",
   cookie: {
     httpOnly: true,
   },
@@ -17,18 +21,18 @@ export default new Elysia({
       exp: "1d",
     })
   )
-  .get("users", async () => {
+  .get("/", async () => {
     const users = await db.query.users.findMany();
     return users;
   })
-  .get("users/:id", async ({ params }) => {
+  .get("/:id", async ({ params }) => {
     const user = await db.query.users.findFirst({
       where: eq(users.id, params.id),
     });
     return user;
   })
   .put(
-    "users/:id",
+    "/:id",
     async ({ params, body, error }) => {
       try {
         const user = await db.transaction(async (tx) => {
@@ -70,7 +74,7 @@ export default new Elysia({
       }),
     }
   )
-  .delete("users/:id", async ({ params, error }) => {
+  .delete("/:id", async ({ params, error }) => {
     try {
       const user = await db.transaction(async (tx) => {
         const [user] = await tx
@@ -91,19 +95,22 @@ export default new Elysia({
   })
   .post(
     "signup",
-    async ({ body, error }) => {
+    async ({ body: { username, email, password }, error }) => {
       const user = await db.transaction(async (tx) => {
         let user = await tx.query.users.findFirst({
-          where: eq(users.username, body.username),
+          where: eq(users.username, username),
         });
 
         if (user) {
           throw error(400, { msg: "User already exists" });
         }
 
-        const hash = await Bun.password.hash(body.password, {
-          algorithm: "bcrypt",
-          cost: 11,
+        const salt = randomBytes(32).toString("hex");
+
+        const hash = await Bun.password.hash(password + salt, {
+          algorithm: "argon2id",
+          memoryCost: 4,
+          timeCost: 3,
         });
 
         const role = await tx.query.roles.findFirst({
@@ -113,9 +120,10 @@ export default new Elysia({
         [user] = await tx
           .insert(users)
           .values({
-            username: body.username,
-            email: body.email,
+            username,
+            email,
             password: hash,
+            salt,
             role_id: role!.id,
           })
           .returning();
@@ -139,20 +147,28 @@ export default new Elysia({
   )
   .post(
     "signin",
-    async ({ body, jwt, cookie: { verify }, error }) => {
+    async ({
+      body: { username, password },
+      jwt,
+      cookie: { session },
+      error,
+    }) => {
       const user = await db.transaction(async (tx) => {
         const user = await tx.query.users.findFirst({
-          where: eq(users.username, body.username),
+          where: eq(users.username, username),
         });
 
         if (!user) {
           throw error(400, { msg: "User not found" });
         }
 
-        const match = await Bun.password.verify(body.password, user!.password);
+        const verify = await Bun.password.verify(
+          password + user.salt,
+          user!.password
+        );
 
-        if (!match) {
-          throw error(400, { msg: "Username or Password does not match" });
+        if (!verify) {
+          throw error(400, { msg: "Incorrect username or password" });
         }
 
         await tx
@@ -160,11 +176,8 @@ export default new Elysia({
           .set({ last_login: new Date() })
           .where(eq(users.id, user.id));
 
-        verify.set({
+        session.set({
           value: await jwt.sign({ user_id: user.id, role_id: user.role_id! }),
-          httpOnly: true,
-          maxAge: 86400,
-          secure: true,
         });
 
         return user;
@@ -183,13 +196,17 @@ export default new Elysia({
       }),
     }
   )
-  .post("verify", async ({ jwt, set, cookie: { verify } }) => {
-    const user = await jwt.verify(verify.value);
+  .post("verify", async ({ jwt, set, cookie: { session } }) => {
+    const key = await jwt.verify(session.value);
 
-    if (!user) {
+    if (!key) {
       set.status = 401;
       return "Unauthorized";
     }
 
-    return "Verified!";
+    return { msg: "Verified!", key };
+  })
+  .get("logout", async ({ cookie: { session } }) => {
+    session.remove();
+    return "Signed out";
   });

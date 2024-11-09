@@ -5,22 +5,23 @@ import { replies } from "@/db/schema";
 
 export default new Elysia({
   tags: ["replies"],
+  prefix: "/replies",
   cookie: {
     httpOnly: true,
   },
 })
-  .get("replies", async () => {
+  .get("/", async () => {
     const replies = await db.query.replies.findMany();
     return replies;
   })
-  .get("replies/:id", async ({ params }) => {
+  .get("/:id", async ({ params }) => {
     const replie = await db.query.replies.findFirst({
       where: eq(replies.id, params.id),
     });
     return replie;
   })
   .post(
-    "replies",
+    "/",
     async ({ body }) => {
       const replie = await db.transaction(async (tx) => {
         const [replie] = await tx.insert(replies).values(body).returning();
@@ -42,7 +43,7 @@ export default new Elysia({
     }
   )
   .put(
-    "replies/:id",
+    "/:id",
     async ({ params, body }) => {
       const replie = await db.transaction(async (tx) => {
         const [replie] = await tx
@@ -67,7 +68,7 @@ export default new Elysia({
       }),
     }
   )
-  .delete("replies/:id", async ({ params }) => {
+  .delete("/:id", async ({ params }) => {
     const replie = await db.transaction(async (tx) => {
       const [replie] = await tx
         .delete(replies)

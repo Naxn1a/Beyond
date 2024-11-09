@@ -1,14 +1,7 @@
 import { Elysia } from "elysia";
 import { swagger } from "@elysiajs/swagger";
 import { cors } from "@elysiajs/cors";
-import users from "./routes/users";
-import reputations from "./routes/reputations";
-import posts from "./routes/posts";
-import threads from "./routes/threads";
-import replies from "./routes/replies";
-import subscriptions from "./routes/subscriptions";
-import transactions from "./routes/transactions";
-import reports from "./routes/reports";
+import { route } from "./routes";
 
 export const app = new Elysia()
   .use(swagger())
@@ -18,17 +11,8 @@ export const app = new Elysia()
       return request.json();
     }
   })
-  .group("/api/v1", (api) => {
-    return api
-      .use(users)
-      .use(reputations)
-      .use(posts)
-      .use(threads)
-      .use(replies)
-      .use(subscriptions)
-      .use(transactions)
-      .use(reports);
-  })
+
+  .use(route)
   .get("/", ({ redirect }) => redirect("/swagger"))
   .get("/helloworld", () => "Hello, World!")
   .listen(3579);

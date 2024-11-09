@@ -5,11 +5,12 @@ import { reportUser, reportPost } from "@/db/schema";
 
 export default new Elysia({
   tags: ["reports"],
+  prefix: "/reports",
   cookie: {
     httpOnly: true,
   },
 })
-  .get("reports/:type", async ({ params }) => {
+  .get("/:type", async ({ params }) => {
     if (params.type === "user") {
       const reportsUsers = await db.query.reportUser.findMany();
       return reportsUsers;
@@ -20,7 +21,7 @@ export default new Elysia({
       throw error(400, "Invalid type");
     }
   })
-  .get("reports/:type/:id", async ({ params }) => {
+  .get("/:type/:id", async ({ params }) => {
     if (params.type === "user") {
       const reportUser = await db.query.reportUser.findFirst({
         where: eq(reportPost.id, params.id),
@@ -36,7 +37,7 @@ export default new Elysia({
     }
   })
   .post(
-    "reports/:type",
+    "/:type",
     async ({ params, body }) => {
       if (params.type === "user") {
         const report_user = await db.transaction(async (tx) => {
@@ -79,7 +80,7 @@ export default new Elysia({
     }
   )
   .put(
-    "reports/:type/:id",
+    "/:type/:id",
     async ({ params, body }) => {
       if (params.type === "user") {
         const report_user = await db.transaction(async (tx) => {

@@ -5,22 +5,23 @@ import { threads } from "@/db/schema";
 
 export default new Elysia({
   tags: ["threads"],
+  prefix: "/threads",
   cookie: {
     httpOnly: true,
   },
 })
-  .get("threads", async () => {
+  .get("/", async () => {
     const threads = await db.query.threads.findMany();
     return threads;
   })
-  .get("threads/:id", async ({ params }) => {
+  .get("/:id", async ({ params }) => {
     const thread = await db.query.threads.findFirst({
       where: eq(threads.id, params.id),
     });
     return thread;
   })
   .post(
-    "threads",
+    "/",
     async ({ body }) => {
       const thread = await db.transaction(async (tx) => {
         const [thread] = await tx.insert(threads).values(body).returning();
@@ -41,7 +42,7 @@ export default new Elysia({
     }
   )
   .put(
-    "threads/:id",
+    "/:id",
     async ({ params, body }) => {
       const thread = await db.transaction(async (tx) => {
         const [thread] = await tx
@@ -65,7 +66,7 @@ export default new Elysia({
       }),
     }
   )
-  .delete("threads/:id", async ({ params }) => {
+  .delete("/:id", async ({ params }) => {
     const thread = await db.transaction(async (tx) => {
       const [thread] = await tx
         .delete(threads)
